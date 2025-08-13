@@ -1,0 +1,54 @@
+// 各ページの調整
+.page {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+// 一覧テーブルの調整
+table.page-list {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        border: 1px solid #ccc;
+        padding: 8px;
+    }
+
+    th {
+        background: #f2f2f2;
+    }
+}
+
+// フォーム
+.form-group {
+    label {
+        display: block;
+        margin-bottom: 0.4rem;
+        font-weight: 600;
+        color: #555;
+    }
+
+    input,
+    select {
+        width: 100%;
+        padding: 0.6rem 0.8rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+        box-sizing: border-box;
+
+        &:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+    }
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
