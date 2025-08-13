@@ -16,10 +16,13 @@ class AttendanceBreak extends Model
     ];
 
     protected $dates = [
-        'start_time',
-        'end_time',
         'created_at',
         'updated_at',
+    ];
+
+    protected $casts = [
+        'start_time' => 'datetime:H:i:s',
+        'end_time' => 'datetime:H:i:s',
     ];
 
     /**

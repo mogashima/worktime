@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('approval_attendances', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('attendance_id');
             $table->date('date');
             $table->time('clock_in')->nullable();
             $table->time('clock_out')->nullable();

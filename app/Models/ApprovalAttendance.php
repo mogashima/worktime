@@ -10,6 +10,7 @@ class ApprovalAttendance extends Model
     protected $table = 'approval_attendances';
 
     protected $fillable = [
+        'attendance_id',
         'user_id',
         'date',
         'clock_in',
@@ -47,7 +48,17 @@ class ApprovalAttendance extends Model
      * 承認ステータス
      */
     public function approvalStatus()
-{
-    return $this->belongsTo(ApprovalStatus::class, 'status_code', 'status_code');
-}
+    {
+        return $this->belongsTo(ApprovalStatus::class, 'status_code', 'status_code');
+    }
+    public function attendanceBreaks()
+    {
+        return $this->hasMany(ApprovalAttendanceBreak::class);
+    }
+
+    // 元の Attendance へのリレーション
+    public function attendance(): BelongsTo
+    {
+        return $this->belongsTo(Attendance::class);
+    }
 }

@@ -33,6 +33,10 @@ class AdminAttendanceController extends Controller
             'date' => ['required', 'date'],
             'clock_in' => ['required', 'date_format:H:i'],
             'clock_out' => ['required', 'date_format:H:i', 'after:clock_in'],
+            'attendance_breaks' => ['array'],
+            'attendance_breaks.*.start_time' => ['required', 'date_format:H:i'],
+            'attendance_breaks.*.end_time' => ['nullable', 'date_format:H:i', 'after:attendance_breaks.*.start_time'],
+            'attendance_breaks.*.id' => ['nullable', 'integer'],
         ]);
 
         $attendance = new Attendance();
@@ -42,7 +46,7 @@ class AdminAttendanceController extends Controller
         $attendance->clock_out = $validated['clock_out'];
         $attendance->save();
 
-        // 休憩データ作成（リレーション経由）
+        // 休憩データ作成
         if (!empty($request->attendance_breaks)) {
             foreach ($request->attendance_breaks as $break) {
                 AttendanceBreak::create([

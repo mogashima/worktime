@@ -19,8 +19,8 @@
                     <td v-if="isAdmin">{{ attendance.user.name }}</td>
                     <td>{{ formatDate(attendance.created_at) }}</td>
                     <td>{{ formatDate(attendance.date) }}</td>
-                    <td>{{ attendance.clock_in }}</td>
-                    <td>{{ attendance.clock_out }}</td>
+                    <td>{{ attendance.clock_in.slice(0, 5) }}</td>
+                    <td>{{ attendance.clock_out ? attendance.clock_out.slice(0, 5) : '' }}</td>
                     <td>{{ attendance.approval_status.name }}</td>
                     <td v-if="isAdmin">
                         <button class="btn-add mr-small" @click="approve(attendance.id)"
