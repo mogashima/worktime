@@ -9,7 +9,7 @@
             <router-link v-if="userStore.isAdmin()" to="/admin/approval" class="nav-item">承認管理</router-link>
             <!-- 一般ユーザーのみ表示 -->
             <router-link v-if="userStore.isUser()" to="/attendance" class="nav-item">勤怠入力</router-link>
-            <router-link v-if="userStore.isUser()" to="/accounting" class="nav-item">経理入力</router-link>
+            <router-link v-if="userStore.isUser()" to="/expense" class="nav-item">経費入力</router-link>
             <router-link v-if="userStore.isUser()" to="/approval" class="nav-item">承認履歴</router-link>
         </div>
         <div class="nav-user">

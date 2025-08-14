@@ -1,5 +1,5 @@
 import type { User } from "./userType"
-import type { ApprovalStatus } from "./approvalStatus"
+import type { ApprovalStatus } from "./approvalStatusType"
 export interface ApprovalAttendance {
     id: number
     user: User

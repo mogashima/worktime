@@ -11,7 +11,7 @@ import { ref } from 'vue'
 import NavigationComponent from '@/components/NavigationComponent.vue'
 import ApprovalAttendanceListComponent from '@/components/approval/ApprovalAttendanceListComponent.vue'
 import axios from '@/plugins/axios'
-import { StatusCode } from '@/types/approvalStatus'
+import { StatusCode } from '@/types/approvalStatusType'
 
 
 const listRef = ref<InstanceType<typeof ApprovalAttendanceListComponent> | null>(null)

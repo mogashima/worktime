@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             ApprovalStatusSeeder::class,
+            ExpenseCategorySeeder::class,
         ]);
     }
 }

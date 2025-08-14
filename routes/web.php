@@ -9,11 +9,13 @@ use App\Http\Controllers\Api\ApprovalAttendanceController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AttendanceBreakController;
+use App\Http\Controllers\Api\ExpenseController;
+use App\Http\Controllers\Api\ExpenseCategoryController;
 use App\Http\Controllers\Api\AdminApprovalAttendanceController;
 use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\AdminAttendanceController;
 
-//@TODO ログインしていない場合にapiをたたくとエラーになる
+//@TODO 勤怠編集の備考を追加
 
 // ------------------------------
 // APIルート
@@ -29,9 +31,10 @@ Route::prefix('api')->group(function () {
         Route::get('user', [UserController::class, 'currentUser']);
 
         // 勤怠関連
-        Route::get('attendance', [AttendanceController::class, 'index']);
-        Route::post('attendance', [AttendanceController::class, 'store']);
+
         Route::prefix('attendance')->group(function () {
+            Route::get('/', [AttendanceController::class, 'index']);
+            Route::post('/', [AttendanceController::class, 'store']);
             Route::post('start', [AttendanceController::class, 'startWork']);
             Route::post('end', [AttendanceController::class, 'endWork']);
             Route::get('current', [AttendanceController::class, 'getCurrent']);
@@ -41,6 +44,18 @@ Route::prefix('api')->group(function () {
                 Route::post('end', [AttendanceBreakController::class, 'endBreak']);
             });
         });
+
+        // 経費関連
+        Route::prefix('expense')->group(function () {
+            Route::get('/', [ExpenseController::class, 'index']);
+            Route::post('/', [ExpenseController::class, 'store']);
+            Route::put('/{expense_id}', [ExpenseController::class, 'update']);
+            Route::delete('/{expense_id}', [ExpenseController::class, 'delete']);
+            Route::prefix('category')->group(function () {
+                Route::get('/', [ExpenseCategoryController::class, 'index']);
+            });
+        });
+
 
 
 

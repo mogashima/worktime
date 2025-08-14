@@ -7,6 +7,7 @@ import ReservationPage from '@/pages/ReservationPage.vue'
 import NotFoundPage from '@/pages/NotFoundPage.vue'
 import DashboardPage from '@/pages/DashboardPage.vue'
 import AttendancePage from '@/pages/user/AttendancePage.vue'
+import ExpensePage from '@/pages/user/ExpensePage.vue'
 import ApprovalPage from '@/pages/user/ApprovalPage.vue'
 import AdminUserPage from '@/pages/admin/AdminUserPage.vue'
 import AdminApprovalPage from '@/pages/admin/AdminApprovalPage.vue'
@@ -45,6 +46,12 @@ const routes: Array<RouteRecordRaw> = [
         path: '/attendance',
         name: 'Attendance',
         component: AttendancePage,
+        meta: { requiresAuth: true, role_code: RoleCode.User }
+    },
+    {
+        path: '/expense',
+        name: 'Expense',
+        component: ExpensePage,
         meta: { requiresAuth: true, role_code: RoleCode.User }
     },
     {

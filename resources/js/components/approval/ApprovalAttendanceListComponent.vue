@@ -40,8 +40,8 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import axios from '@/plugins/axios'
-import { ApprovalAttendance } from '@/types/approvalAttendance'
-import { StatusCode } from '@/types/approvalStatus'
+import { ApprovalAttendance } from '@/types/approvalAttendanceType'
+import { StatusCode } from '@/types/approvalStatusType'
 import { RoleCode } from '@/types/roleType'
 import { useUserStore } from '@/stores/userStore' // 追加
 
