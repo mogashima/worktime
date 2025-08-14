@@ -2,6 +2,7 @@
     <NavigationComponent />
     <div class="dashboard-container" v-if="userStore.user">
         <h2>ダッシュボード</h2>
+        <AlertComponent :alert-data="alertData" />
         <p>ようこそ、{{ userStore.user.name }} さん！</p>
 
         <div class="attendance-buttons">
@@ -65,10 +66,13 @@
 import { ref, watch, onMounted } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/userStore'
-import NavigationComponent from '@/components/NavigationComponent.vue'
 import type { Attendance } from '@/types/attendanceType'
+import { Alert, AlertType } from '@/types/alertType'
+import NavigationComponent from '@/components/NavigationComponent.vue'
+import AlertComponent from '@/components/common/AlertComponent.vue'
 
 const userStore = useUserStore()
+const alertData = ref<Alert | null>(null)
 
 const isLoading = ref(false)
 const currentAttendance = ref<Attendance | null>(null)
@@ -97,10 +101,9 @@ const startWork = async () => {
     try {
         await axios.post('/api/attendance/start')
         await fetchCurrentAttendance()
-        alert('勤務を開始しました')
+        alertData.value = new Alert('勤務を開始しました', AlertType.Success)
     } catch (error) {
-        console.error(error)
-        alert('勤務開始に失敗しました')
+        alertData.value = new Alert('勤務開始に失敗しました', AlertType.Error)
     } finally {
         isLoading.value = false
     }
@@ -112,10 +115,9 @@ const endWork = async () => {
     try {
         await axios.post('/api/attendance/end')
         currentAttendance.value = null
-        alert('勤務を終了しました')
+        alertData.value = new Alert('勤務を終了しました', AlertType.Success)
     } catch (error) {
-        console.error(error)
-        alert('勤務終了に失敗しました')
+        alertData.value = new Alert('勤務終了に失敗しました', AlertType.Error)
     } finally {
         isLoading.value = false
     }
@@ -130,11 +132,10 @@ const startBreak = async () => {
     isLoading.value = true
     try {
         await axios.post('/api/attendance/break/start')
-        await fetchCurrentAttendance()  // 休憩履歴も含まれて返るため再取得
-        alert('休憩を開始しました')
+        await fetchCurrentAttendance()
+        alertData.value = new Alert('休憩を開始しました', AlertType.Success)
     } catch (error) {
-        console.error(error)
-        alert('休憩開始に失敗しました')
+        alertData.value = new Alert('休憩開始に失敗しました', AlertType.Error)
     } finally {
         isLoading.value = false
     }
@@ -146,17 +147,16 @@ const endBreak = async () => {
         !currentAttendance.value ||
         !currentAttendance.value.attendance_breaks?.some((b) => b.end_time === null)
     ) {
-        alert('休憩中ではありません')
+        alertData.value = new Alert('休憩中ではありません', AlertType.Error)
         return
     }
     isLoading.value = true
     try {
         await axios.post('/api/attendance/break/end')
         await fetchCurrentAttendance()
-        alert('休憩を終了しました')
+        alertData.value = new Alert('休憩を終了しました', AlertType.Success)
     } catch (error) {
-        console.error(error)
-        alert('休憩終了に失敗しました')
+        alertData.value = new Alert('休憩終了に失敗しました', AlertType.Error)
     } finally {
         isLoading.value = false
     }
@@ -169,7 +169,7 @@ const fetchCurrentAttendance = async () => {
         currentAttendance.value =
             Object.keys(res.data).length === 0 ? null : res.data
     } catch (error) {
-        console.error(error)
+        alertData.value = new Alert('勤怠情報の取得に失敗しました', AlertType.Error)
         currentAttendance.value = null
     }
 }
