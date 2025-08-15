@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\AttendanceBreak;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -33,9 +34,24 @@ class AttendanceController extends Controller
     {
         $userId = Auth::user()->id;
         $validated = $request->validate([
-            'date' => 'required|date',
+            'date' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($userId) {
+                    $exists = Attendance::where('user_id', $userId)
+                        ->whereDate('date', $value)
+                        ->exists();
+                    if ($exists) {
+                        $fail(Lang::get('validation.date_exists'));
+                    }
+                }
+            ],
             'clock_in' => 'required|string',
-            'clock_out' => 'required|string',
+            'clock_out' => 'required|string|after:clock_in',
+            'attendance_breaks' => ['array'],
+            'attendance_breaks.*.start_time' => ['required', 'date_format:H:i'],
+            'attendance_breaks.*.end_time' => ['nullable', 'date_format:H:i', 'after:attendance_breaks.*.start_time'],
+            'attendance_breaks.*.id' => ['nullable', 'integer'],
         ]);
 
         $attendance = Attendance::create([

@@ -133,9 +133,14 @@
     margin-top: 1rem;
     text-align: center;
 
-    li {
-        list-style: none;
+    ul {
+        padding: 0;
+
+        li {
+            list-style: none;
+        }
     }
+
 }
 
 .success-message {

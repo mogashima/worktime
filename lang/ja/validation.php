@@ -30,6 +30,7 @@ return [
     'date' => ':attributeは、正しい日付ではありません。',
     'date_equals' => ':attributeは:dateと同じ日付を入力してください。',
     'date_format' => ':attributeの形式が\':format\'と一致しません。',
+    'date_exists' => '同じ日付がすでに登録されています。',
     'decimal' => ':attributeは、小数点以下が:decimalである必要があります。',
     'declined' => ':attributeを拒否する必要があります。',
     'declined_if' => ':otherが:valueの場合、:attributeを拒否する必要があります。',
@@ -155,6 +156,10 @@ return [
     'url' => ':attributeは、有効なURL形式で指定してください。',
     'uuid' => ':attributeは、有効なUUIDである必要があります。',
     'attributes' => [
+        'clock_in' => '出勤時間',
+        'clock_out' => '退勤時間',
+        'attendance_breaks.*.start_time' => '休憩開始',
+        'attendance_breaks.*.end_time' => '休憩終了',
         'title' => 'タイトル',
         'amount' => '金額',
         'date' => '日付',

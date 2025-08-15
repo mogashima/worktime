@@ -17,7 +17,7 @@
                     <td>{{ attendance.clock_out ? attendance.clock_out.slice(0, 5) : '' }}</td>
                     <td>
                         <button class="btn-edit mr-small" @click="$emit('edit-attendance', attendance)">編集</button>
-                        <button class="btn-delete" @click="confirmDelete(attendance.id)">削除</button>
+                        <button class="btn-delete" @click="$emit('delete-attendance', attendance)">削除</button>
                     </td>
                 </tr>
                 <tr v-if="attendances.length === 0">
@@ -56,16 +56,10 @@ const fetchAttendances = async () => {
     }
 }
 
-const confirmDelete = (attendanceId: number) => {
-    if (confirm('本当に削除しますか？')) {
-        emit('delete-attendance', attendanceId)
-    }
-}
-
 onMounted(() => {
     fetchAttendances()
 })
 
-// 外部にfetchAttendancesを公開
+// 外部に fetchAttendances を公開
 defineExpose({ fetchAttendances })
 </script>

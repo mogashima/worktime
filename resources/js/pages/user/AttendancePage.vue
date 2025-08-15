@@ -2,7 +2,7 @@
     <NavigationComponent />
     <div class="attendance-page page">
         <h2>出勤簿管理</h2>
-
+        <AlertComponent :alert-data="alertData" />
         <!-- 追加ボタン -->
         <button @click="openAddModal" class="btn-add">出勤記録を追加</button>
 
@@ -14,7 +14,10 @@
         <div v-if="modalVisible" class="modal-overlay" @click.self="closeModal">
             <div class="modal-content">
                 <AttendanceFormComponent :user-id="userStore.user ? userStore.user.id : null"
-                    :attendance="editingAttendance" @attendance-saved="onAttendanceSaved" @edit-cancel="closeModal" />
+                    :attendance="editingAttendance" 
+                    @attendance-stored="onAttendanceStored" 
+                    @attendance-updated="onAttendanceUpdated"
+                    @edit-cancel="closeModal" />
             </div>
         </div>
     </div>
@@ -25,14 +28,17 @@ import { ref, onMounted, watch } from 'vue'
 import axios from '@/plugins/axios'
 import { useUserStore } from '@/stores/userStore'
 import { Attendance } from '@/types/attendanceType'
+import { Alert, AlertType } from '@/types/alertType'
 import NavigationComponent from '@/components/NavigationComponent.vue'
 import AttendanceFormComponent from '@/components/attendance/AttendanceFormComponent.vue'
 import AttendanceListComponent from '@/components/attendance/AttendanceListComponent.vue'
+import AlertComponent from '@/components/common/AlertComponent.vue'
 
 const attendances = ref<Attendance[]>([])
 const editingAttendance = ref<Attendance | null>(null)
 const modalVisible = ref(false)
 const userStore = useUserStore()
+const alertData = ref<Alert | null>(null)
 
 const fetchAttendances = async () => {
     if (!userStore.user) return
@@ -81,9 +87,18 @@ const closeModal = () => {
 }
 
 // フォーム保存後の処理
-const onAttendanceSaved = async () => {
+const onAttendanceStored = async () => {
     modalVisible.value = false
     editingAttendance.value = null
     await fetchAttendances()
+    alertData.value = new Alert('登録に成功しました', AlertType.Success)
+}
+
+// フォーム更新後の処理
+const onAttendanceUpdated = async () => {
+    modalVisible.value = false
+    editingAttendance.value = null
+    await fetchAttendances()
+    alertData.value = new Alert('変更を申請しました', AlertType.Success)
 }
 </script>

@@ -1,5 +1,6 @@
 <template>
     <div class="error-message" v-if="apiError">
+        <p v-if="apiError.message">{{ apiError.message  }}</p>
         <ul v-if="apiError.errors">
             <li v-for="(messages, field) in apiError.errors" :key="field">
                 <span v-for="(msg, index) in messages" :key="index">{{ msg }}</span>

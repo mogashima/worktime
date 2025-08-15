@@ -7,9 +7,12 @@ export class ApiError {
     constructor(error: AxiosError) {
         this.message = ''
         this.errors = {}
+        if (error.response?.status !== 422) {
+            this.message = 'エラーが発生しました'
+        }
+        
         if (error.response?.data) {
             const data: any = error.response?.data
-            this.message = data.message
             this.errors = data.errors
         }
 

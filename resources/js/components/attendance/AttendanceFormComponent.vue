@@ -1,6 +1,8 @@
 <template>
     <div class="attendance-form">
         <h3>{{ isEdit ? '出勤記録編集' : '出勤記録追加' }}</h3>
+        <!-- エラー表示 -->
+        <FormMessageComponent :apiError="apiError" />
         <form @submit.prevent="submitForm" class="form-container">
             <div class="form-group">
                 <label>日付:</label>
@@ -42,22 +44,25 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch, computed } from 'vue'
+import { reactive, watch, computed, ref } from 'vue'
 import axios from '@/plugins/axios'
 import { useUserStore } from '@/stores/userStore';
 import type { Attendance } from '@/types/attendanceType';
 import { AttendanceBreak } from '@/types/attendanceBreakType';
+import { ApiError } from '@/types/apiErrorType';
+import FormMessageComponent from '@/components/common/FormMessageComponent.vue'
 
 const props = defineProps<{
     userId: number | null
     attendance: Attendance | null
 }>()
 
-const emit = defineEmits(['attendance-saved', 'edit-cancel'])
+const emit = defineEmits(['attendance-updated', 'attendance-stored', 'edit-cancel'])
 
 const userStore = useUserStore()
 
 const isEdit = computed(() => !!props.attendance)
+const apiError = ref<ApiError | null>(null)
 
 const emptyForm = {
     id: 0,
@@ -96,21 +101,34 @@ const submitForm = async () => {
 
     try {
         if (isEdit.value && props.attendance) {
-            if (userStore.isAdmin()) {
-                await axios.put(`/api/admin/user/${props.userId}/attendance/${props.attendance.id}`, form)
-            } else {
-                await axios.post(`/api/approval/attendance`, form)
-            }
+            await updateAttendance()
+            emit('attendance-updated')
         } else {
-            if (userStore.isAdmin()) {
-                await axios.post(`/api/admin/user/${props.userId}/attendance`, form)
-            } else {
-                await axios.post(`/api/attendance`, form)
-            }
+            await storeAttendance()
+            emit('attendance-stored')
         }
-        emit('attendance-saved')
-    } catch (error) {
-        console.error('出勤登録エラー:', error)
+
+    } catch (error: any) {
+        apiError.value = new ApiError(error)
+    }
+}
+
+// 新規作成
+const storeAttendance = async () => {
+    if (userStore.isAdmin()) {
+        await axios.post(`/api/admin/user/${props.userId}/attendance`, form)
+    } else {
+        await axios.post(`/api/attendance`, form)
+    }
+}
+
+// 更新
+const updateAttendance = async () => {
+    if (!props.attendance) return
+    if (userStore.isAdmin()) {
+        await axios.put(`/api/admin/user/${props.userId}/attendance/${props.attendance.id}`, form)
+    } else {
+        await axios.post(`/api/approval/attendance`, form)
     }
 }
 

@@ -38,35 +38,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import axios from '@/plugins/axios'
-import { ApprovalAttendance } from '@/types/approvalAttendanceType'
+import { computed } from 'vue'
 import { StatusCode } from '@/types/approvalStatusType'
 import { RoleCode } from '@/types/roleType'
-import { useUserStore } from '@/stores/userStore' // 追加
+import { useUserStore } from '@/stores/userStore'
+import type { ApprovalAttendance } from '@/types/approvalAttendanceType'
 
-const userStore = useUserStore() // store インスタンス取得
-const approvalAttendances = ref<ApprovalAttendance[]>([])
+const props = defineProps<{
+    approvalAttendances: ApprovalAttendance[]
+}>()
 
-// ログインユーザ ID を取得（computed にすると reactive に追従）
-const userId = computed(() => userStore.user?.id)
-// 管理者判定
+const emit = defineEmits(['approve', 'reject'])
+
+const userStore = useUserStore()
 const isAdmin = computed(() => userStore.user?.role_code === RoleCode.Admin)
-
-const fetchApprovalAttendances = async () => {
-    try {
-        if (isAdmin.value) {
-            const res = await axios.get('/api/admin/approval/attendance')
-            approvalAttendances.value = res.data
-        } else {
-            const res = await axios.get('/api/approval/attendance')
-            approvalAttendances.value = res.data
-        }
-
-    } catch (error) {
-        console.error('承認待ち勤怠取得エラー:', error)
-    }
-}
 
 const rowClass = (statusCode: string) => {
     switch (statusCode) {
@@ -86,20 +71,6 @@ const formatDate = (dateStr: string) => {
     return date.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
 }
 
-const emit = defineEmits(['approve', 'reject'])
-
-const approve = (id: number) => {
-    emit('approve', id)
-}
-
-const reject = (id: number) => {
-    emit('reject', id)
-}
-
-onMounted(() => {
-    fetchApprovalAttendances()
-})
-
-// 外部にfetchApprovalAttendancesを公開（必要に応じて）
-defineExpose({ fetchApprovalAttendances })
+const approve = (id: number) => emit('approve', id)
+const reject = (id: number) => emit('reject', id)
 </script>
