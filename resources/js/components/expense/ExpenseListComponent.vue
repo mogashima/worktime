@@ -16,7 +16,7 @@
         <tr v-for="expense in expenses" :key="expense.id">
           <td class="check-box">
             <input type="checkbox" :value="expense.id" :checked="isSelected(expense)"
-              @change="$emit('toggle-select', expense)" />
+              @change="$emit('toggle-select', expense)" :disabled="expense.approval_expense_id !== null" />
           </td>
           <td>{{ expense.date }}</td>
           <td>{{ expense.title }}</td>
@@ -24,10 +24,12 @@
           <td>{{ expense.category.name }}</td>
           <td>{{ expense.description }}</td>
           <td>
-            <button class="btn-edit mr-small" @click="$emit('edit-expense', expense)">
+            <button class="btn-edit mr-small" @click="$emit('edit-expense', expense)"
+              :disabled="expense.approval_expense_id !== null">
               編集
             </button>
-            <button class="btn-delete" @click="$emit('delete-expense', expense)">
+            <button class="btn-delete" @click="$emit('delete-expense', expense)"
+              :disabled="expense.approval_expense_id !== null">
               削除
             </button>
           </td>

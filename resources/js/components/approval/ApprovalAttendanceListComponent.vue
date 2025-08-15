@@ -1,6 +1,6 @@
 <template>
     <div class="approval-attendance-list">
-        <h3>勤怠承認</h3>
+        <h3>勤怠申請</h3>
         <table class="page-list">
             <thead>
                 <tr>
@@ -30,7 +30,7 @@
                     </td>
                 </tr>
                 <tr v-if="approvalAttendances.length === 0">
-                    <td colspan="7" class="text-center">承認待ち勤怠がありません</td>
+                    <td colspan="7" class="text-center">申請中の勤怠がありません</td>
                 </tr>
             </tbody>
         </table>

@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->foreignId('approval_expense_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('amount', 10, 2);
             $table->date('date');
             $table->string('category_code')->default('misc');

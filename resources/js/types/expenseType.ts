@@ -2,6 +2,7 @@ import { ExpenseCategory } from "./expenseCategoryType"
 export interface Expense {
     id: number
     user_id: number
+    approval_expense_id: number
     title: string
     date: string
     category_code: string

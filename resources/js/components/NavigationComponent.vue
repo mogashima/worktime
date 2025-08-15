@@ -10,7 +10,7 @@
             <!-- 一般ユーザーのみ表示 -->
             <router-link v-if="userStore.isUser()" to="/attendance" class="nav-item">勤怠入力</router-link>
             <router-link v-if="userStore.isUser()" to="/expense" class="nav-item">経費入力</router-link>
-            <router-link v-if="userStore.isUser()" to="/approval" class="nav-item">承認履歴</router-link>
+            <router-link v-if="userStore.isUser()" to="/approval" class="nav-item">申請履歴</router-link>
         </div>
         <div class="nav-user">
             <div class="dropdown" @mouseenter="open = true" @mouseleave="open = false">

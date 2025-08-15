@@ -6,12 +6,14 @@ use App\Exceptions\ApiNotFoundException;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\ApprovalAttendanceController;
+use App\Http\Controllers\Api\ApprovalExpenseController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AttendanceBreakController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\ExpenseCategoryController;
 use App\Http\Controllers\Api\AdminApprovalAttendanceController;
+use App\Http\Controllers\Api\AdminApprovalExpenseController;
 use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\AdminAttendanceController;
 
@@ -61,8 +63,17 @@ Route::prefix('api')->group(function () {
 
         // 承認
         Route::prefix('approval')->group(function () {
-            Route::post('attendance', [ApprovalAttendanceController::class, 'store']);
-            Route::get('attendance', [ApprovalAttendanceController::class, 'index']);
+            Route::prefix('attendance')->group(function () {
+                Route::post('/', [ApprovalAttendanceController::class, 'store']);
+                Route::get('/', [ApprovalAttendanceController::class, 'index']);
+            });
+            Route::prefix('expense')->group(function () {
+                Route::post('/', [ApprovalExpenseController::class, 'store']);
+                Route::get('/', [ApprovalExpenseController::class, 'index']);
+                Route::delete('/{approvalExpense}', [ApprovalExpenseController::class, 'destroy']);
+            });
+
+
         });
 
         Route::prefix('admin')->group(function () {
@@ -77,8 +88,14 @@ Route::prefix('api')->group(function () {
             });
 
             Route::prefix('approval')->group(function () {
-                Route::get('attendance', [AdminApprovalAttendanceController::class, 'index']);
-                Route::put('attendance/{approvalAttendance}', [AdminApprovalAttendanceController::class, 'update']);
+                Route::prefix('attendance')->group(function () {
+                    Route::get('/', [AdminApprovalAttendanceController::class, 'index']);
+                    Route::put('/{approvalAttendance}', [AdminApprovalAttendanceController::class, 'update']);
+                });
+                Route::prefix('expense')->group(function () {
+                    Route::get('/', [AdminApprovalExpenseController::class, 'index']);
+                    Route::put('/{approvalExpense}', [AdminApprovalExpenseController::class, 'update']);
+                });
             });
         });
     });

@@ -10,6 +10,7 @@ class Expense extends Model
     use HasFactory;
 
     protected $fillable = [
+        'approval_expense_id',
         'title',
         'date',
         'category_code',
@@ -27,5 +28,11 @@ class Expense extends Model
     public function category()
     {
         return $this->belongsTo(ExpenseCategory::class, 'category_code', 'category_code');
+    }
+
+    public function approval()
+    {
+        // expense は approval に属する（nullable なので belongsTo 側で問題なし）
+        return $this->belongsTo(ApprovalExpense::class);
     }
 }
