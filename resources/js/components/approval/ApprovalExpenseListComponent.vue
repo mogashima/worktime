@@ -1,5 +1,6 @@
 <template>
     <div class="approval-expense-list">
+        <h3>経費申請</h3>
         <table class="page-list">
             <thead>
                 <tr>

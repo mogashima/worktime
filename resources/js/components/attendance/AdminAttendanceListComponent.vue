@@ -13,8 +13,8 @@
             <tbody>
                 <tr v-for="attendance in attendances" :key="attendance.id">
                     <td>{{ formatDate(attendance.date) }}</td>
-                    <td>{{ attendance.clock_in.slice(0, 5) }}</td>
-                    <td>{{ attendance.clock_out ? attendance.clock_out.slice(0, 5) : '' }}</td>
+                    <td>{{ attendance.start_time }}</td>
+                    <td>{{ attendance.end_time }}</td>
                     <td>
                         <button class="btn-edit mr-small" @click="$emit('edit-attendance', attendance)">編集</button>
                         <button class="btn-delete" @click="$emit('delete-attendance', attendance)">削除</button>

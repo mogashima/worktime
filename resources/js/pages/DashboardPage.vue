@@ -43,12 +43,12 @@
                 </thead>
                 <tbody>
                     <tr v-for="breakItem in currentAttendance.attendance_breaks" :key="breakItem.id">
-                        <td>{{ breakItem.start_time }}</td>
+                        <td>{{ breakItem.clock_in }}</td>
                         <td>
-                            {{ breakItem.end_time ?? '休憩中' }}
+                            {{ breakItem.clock_out ?? '休憩中' }}
                         </td>
                         <td>
-                            {{ breakItem.end_time ? diffMinutes(breakItem.start_time, breakItem.end_time) + '分' : '-' }}
+                            {{ breakItem.end_time ? breakItem.break_value + '分' : '-' }}
                         </td>
                     </tr>
                 </tbody>
@@ -87,9 +87,9 @@ watch(currentAttendance, (val) => {
     isWorking.value = val !== null && !val.clock_out
     isWorkEnded.value = val !== null && !!val.clock_out
 
-    // 休憩中判定: attendance_breaks の中に end_time が null のものがあれば休憩中
+    // 休憩中判定: attendance_breaks の中に end_time が 空文字 のものがあれば休憩中
     if (val && val.attendance_breaks && Array.isArray(val.attendance_breaks)) {
-        isOnBreak.value = val.attendance_breaks.some(b => b.end_time === null)
+        isOnBreak.value = val.attendance_breaks.some(b => b.end_time === '')
     } else {
         isOnBreak.value = false
     }
@@ -114,7 +114,7 @@ const endWork = async () => {
     isLoading.value = true
     try {
         await axios.post('/api/attendance/end')
-        currentAttendance.value = null
+        await fetchCurrentAttendance()
         alertData.value = new Alert('勤務を終了しました', AlertType.Success)
     } catch (error) {
         alertData.value = new Alert('勤務終了に失敗しました', AlertType.Error)
@@ -126,7 +126,7 @@ const endWork = async () => {
 // 休憩開始
 const startBreak = async () => {
     if (!currentAttendance.value) {
-        alert('勤務開始していません')
+        alertData.value = new Alert('勤務開始していません', AlertType.Error)
         return
     }
     isLoading.value = true
@@ -145,7 +145,7 @@ const startBreak = async () => {
 const endBreak = async () => {
     if (
         !currentAttendance.value ||
-        !currentAttendance.value.attendance_breaks?.some((b) => b.end_time === null)
+        !currentAttendance.value.attendance_breaks?.some((b) => b.end_time === '')
     ) {
         alertData.value = new Alert('休憩中ではありません', AlertType.Error)
         return

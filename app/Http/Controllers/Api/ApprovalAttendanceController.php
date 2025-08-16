@@ -33,7 +33,7 @@ class ApprovalAttendanceController extends Controller
                 'required',
                 'date',
                 function ($attribute, $value, $fail) use ($userId, $attendanceId) {
-                    $exists = Attendance::where('user_id', $userId)
+                    $exists = Attendance::whereUserId($userId)
                         ->whereDate('date', $value)
                         ->where('id', '!=', $attendanceId)
                         ->exists();
@@ -42,9 +42,9 @@ class ApprovalAttendanceController extends Controller
                     }
                 }
             ],
-            'clock_in' => ['nullable', 'date_format:H:i'],
-            'clock_out' => ['nullable', 'date_format:H:i', 'after:clock_in'],
-            'note' => ['nullable', 'string'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i', 'after:clock_in'],
+            'note' => ['nullable', 'string', 'max:100'],
             'attendance_breaks' => ['array'],
             'attendance_breaks.*.start_time' => ['required', 'date_format:H:i'],
             'attendance_breaks.*.end_time' => ['nullable', 'date_format:H:i', 'after:attendance_breaks.*.start_time'],
@@ -55,14 +55,14 @@ class ApprovalAttendanceController extends Controller
             'user_id' => $userId,
             'attendance_id' => $validated['id'],
             'date' => $validated['date'],
-            'clock_in' => $validated['clock_in'] ?? null,
-            'clock_out' => $validated['clock_out'] ?? null,
-            'note' => $validated['note'] ?? null,
+            'start_time' => $validated['start_time'],
+            'end_time' => $validated['end_time'],
+            'note' => $validated['note'] ?? '',
         ]);
 
         // 休憩データ作成
-        if (!empty($request->attendance_breaks)) {
-            foreach ($request->attendance_breaks as $break) {
+        if (!empty($validated['attendance_breaks'])) {
+            foreach ($validated['attendance_breaks'] as $break) {
                 ApprovalAttendanceBreak::create([
                     'approval_attendance_id' => $approval->id,
                     'start_time' => $break['start_time'],

@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('approval_attendance_breaks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('approval_attendance_id')->constrained()->onDelete('cascade');
-            $table->timestamp('start_time')->nullable(false);
-            $table->timestamp('end_time')->nullable();
+            $table->string('start_time')->default('');
+            $table->string('end_time')->default('');
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             ApprovalStatusSeeder::class,
             ExpenseCategorySeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

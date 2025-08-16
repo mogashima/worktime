@@ -165,7 +165,7 @@ const deleteAttendance = async () => {
     } catch (error) {
         alertData.value = new Alert('削除に失敗しました', AlertType.Error)
     } finally {
-        closeAttendanceModal()
+        confirmVisible.value = false
     }
 }
 

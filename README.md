@@ -50,3 +50,8 @@ npm run build
 ```bash
 php artisan serve
 ```
+
+## 8. テストの実施
+```bash
+php artisan test --filter=TimeCalculatorServiceTest
+```

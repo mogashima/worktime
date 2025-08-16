@@ -12,14 +12,14 @@ return new class extends Migration {
     {
         Schema::create('approval_attendances', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('attendance_id');
             $table->date('date');
-            $table->time('clock_in')->nullable();
-            $table->time('clock_out')->nullable();
-            $table->text('note')->nullable();
+            $table->string('start_time')->default('');
+            $table->string('end_time')->default('');
             $table->string('status_code')->default('pending');
-            $table->unsignedBigInteger('reviewer_id')->nullable();
+            $table->text('note')->nullable();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('attendance_id')->constrained();
+            $table->foreignId('reviewer_id')->nullable()->constrained('users');
             $table->timestamp('reviewed_at')->nullable();
             $table->timestamps();
 
@@ -27,12 +27,6 @@ return new class extends Migration {
                 ->references('status_code')
                 ->on('approval_statuses')
                 ->onDelete('cascade');
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
-            $table->foreign('reviewer_id')
-                ->references('id')
-                ->on('users');
         });
     }
 

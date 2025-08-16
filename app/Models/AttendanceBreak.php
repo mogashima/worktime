@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Services\TimeCalculatorService;
 
 class AttendanceBreak extends Model
 {
@@ -11,8 +12,11 @@ class AttendanceBreak extends Model
 
     protected $fillable = [
         'attendance_id',
+        'clock_in',
+        'clock_out',
         'start_time',
         'end_time',
+        'break_value',
     ];
 
     protected $dates = [
@@ -21,8 +25,8 @@ class AttendanceBreak extends Model
     ];
 
     protected $casts = [
-        'start_time' => 'datetime:H:i:s',
-        'end_time' => 'datetime:H:i:s',
+        'clock_in' => 'datetime:H:i:s',
+        'clock_out' => 'datetime:H:i:s',
     ];
 
     /**
@@ -38,6 +42,15 @@ class AttendanceBreak extends Model
      */
     public function isFinished(): bool
     {
-        return $this->end_time !== null;
+        return $this->end_time !== '';
+    }
+
+    /**
+     * start_timeとend_timeから休憩時間を計算してbreak_valueにセットする
+     * @return void
+     */
+    public function setBreakValue()
+    {
+        $this->break_value = TimeCalculatorService::getDiffMinute($this->start_time, $this->end_time);
     }
 }

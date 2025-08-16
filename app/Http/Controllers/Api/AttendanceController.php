@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 use App\Models\Attendance;
 use App\Models\AttendanceBreak;
@@ -38,7 +39,7 @@ class AttendanceController extends Controller
                 'required',
                 'date',
                 function ($attribute, $value, $fail) use ($userId) {
-                    $exists = Attendance::where('user_id', $userId)
+                    $exists = Attendance::whereUserId($userId)
                         ->whereDate('date', $value)
                         ->exists();
                     if ($exists) {
@@ -46,29 +47,32 @@ class AttendanceController extends Controller
                     }
                 }
             ],
-            'clock_in' => 'required|string',
-            'clock_out' => 'required|string|after:clock_in',
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i'],
             'attendance_breaks' => ['array'],
             'attendance_breaks.*.start_time' => ['required', 'date_format:H:i'],
-            'attendance_breaks.*.end_time' => ['nullable', 'date_format:H:i', 'after:attendance_breaks.*.start_time'],
+            'attendance_breaks.*.end_time' => ['required', 'date_format:H:i'],
             'attendance_breaks.*.id' => ['nullable', 'integer'],
         ]);
 
-        $attendance = Attendance::create([
-            'user_id' => $userId,
-            'date' => $validated['date'],
-            'clock_in' => $validated['clock_in'],
-            'clock_out' => $validated['clock_out'],
-        ]);
+        $attendance = new Attendance();
+        $attendance->user_id = $userId;
+        $attendance->date = $validated['date'];
+        $attendance->start_time = $validated['start_time'];
+        $attendance->end_time = $validated['end_time'];
+        $attendance->setWorkValue();
+        $attendance->save();
+
 
         // 休憩データ作成（リレーション経由）
-        if (!empty($request->attendance_breaks)) {
-            foreach ($request->attendance_breaks as $break) {
-                AttendanceBreak::create([
-                    'attendance_id' => $attendance->id,
-                    'start_time' => $break['start_time'],
-                    'end_time' => $break['end_time'],
-                ]);
+        if (!empty($validated['attendance_breaks'])) {
+            foreach ($validated['attendance_breaks'] as $break) {
+                $attendanceBreak = new AttendanceBreak();
+                $attendanceBreak->attendance_id = $attendance->id;
+                $attendanceBreak->start_time = $break['start_time'];
+                $attendanceBreak->end_time = $break['end_time'];
+                $attendanceBreak->setBreakValue();
+                $attendanceBreak->save();
             }
         }
 
@@ -81,11 +85,12 @@ class AttendanceController extends Controller
     // 勤務開始
     public function startWork(Request $request)
     {
-        $user = Auth::user();
+        $userId = Auth::user()->id;
+        $now = Carbon::now();
 
         // すでに今日の勤務開始があるかチェック
-        $todayAttendance = Attendance::where('user_id', $user->id)
-            ->whereDate('date', now()->toDateString())
+        $todayAttendance = Attendance::whereUserId($userId)
+            ->whereDate('date', $now->format('Y-m-d'))
             ->first();
 
         if ($todayAttendance) {
@@ -93,9 +98,10 @@ class AttendanceController extends Controller
         }
 
         $attendance = Attendance::create([
-            'user_id' => $user->id,
-            'date' => now()->toDateString(),
-            'clock_in' => now()->toTimeString(),
+            'user_id' => $userId,
+            'date' => $now->format('Y-m-d'),
+            'clock_in' => $now,
+            'start_time' => $now->format('H:i'),
         ]);
 
         return $this->responseJson($attendance, 201);
@@ -104,22 +110,21 @@ class AttendanceController extends Controller
     // 勤務終了
     public function endWork(Request $request)
     {
-        $user = Auth::user();
+        $userId = Auth::user()->id;
+        $now = Carbon::now();
 
         // 今日の勤務記録を取得
-        $attendance = Attendance::where('user_id', $user->id)
-            ->whereDate('date', now()->toDateString())
-            ->first();
+        $attendance = Attendance::whereUserId($userId)
+            ->whereDate('date', $now->format('Y-m-d'))
+            ->firstOrFail();
 
-        if (!$attendance) {
-            return $this->responseJson(['message' => '勤務開始が見つかりません。'], 404);
-        }
-
-        if ($attendance->clock_out) {
+        if ($attendance->end_time) {
             return $this->responseJson(['message' => '既に勤務終了済みです。'], 400);
         }
 
-        $attendance->clock_out = now()->toTimeString();
+        $attendance->clock_out = $now;
+        $attendance->end_time = $now->format('H:i');
+        $attendance->setWorkValue();
         $attendance->save();
 
         return $this->responseJson($attendance);

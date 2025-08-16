@@ -13,8 +13,8 @@ class ApprovalAttendance extends Model
         'attendance_id',
         'user_id',
         'date',
-        'clock_in',
-        'clock_out',
+        'start_time',
+        'end_time',
         'note',
         'status_code',
         'reviewer_id',
@@ -23,8 +23,6 @@ class ApprovalAttendance extends Model
 
     protected $casts = [
         'date' => 'date',
-        'clock_in' => 'datetime:H:i:s',
-        'clock_out' => 'datetime:H:i:s',
         'reviewed_at' => 'datetime',
     ];
 

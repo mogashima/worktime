@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\TimeCalculatorService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,8 +15,10 @@ class Attendance extends Model
         'date',
         'clock_in',
         'clock_out',
+        'start_time',
+        'end_time',
+        'work_value',
     ];
-
     protected $casts = [
         'date' => 'date',
         'clock_in' => 'datetime:H:i:s',
@@ -29,7 +32,15 @@ class Attendance extends Model
 
     public function attendanceBreaks()
     {
-        // Attendanceが複数のAttendanceBreakを持つ（一対多）
         return $this->hasMany(AttendanceBreak::class);
+    }
+
+    /**
+     * start_timeとend_timeから労働時間を計算してwork_valueにセットする
+     * @return void
+     */
+    public function setWorkValue()
+    {
+        $this->work_value = TimeCalculatorService::getDiffMinute($this->start_time, $this->end_time);
     }
 }

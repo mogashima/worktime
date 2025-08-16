@@ -5,5 +5,8 @@ export interface Attendance {
     date: string
     clock_in: string
     clock_out?: string
+    start_time: string
+    end_time: string
+    work_value: number
     attendance_breaks?: AttendanceBreak[]
 }

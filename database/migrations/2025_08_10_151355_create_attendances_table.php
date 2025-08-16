@@ -14,8 +14,11 @@ return new class extends Migration {
             $table->id();
 
             $table->date('date');
-            $table->time('clock_in')->nullable(false);
+            $table->string('start_time')->default('');
+            $table->string('end_time')->default('');
+            $table->time('clock_in')->nullable();
             $table->time('clock_out')->nullable();
+            $table->integer('work_value')->default(0);
             $table->timestamps();
 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

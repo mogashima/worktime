@@ -20,14 +20,14 @@ class AdminApprovalAttendanceController extends Controller
 
     public function update(Request $request, ApprovalAttendance $approvalAttendance)
     {
-        $request->validate([
+        $validated = $request->validate([
             'status_code' => [
                 'required',
                 'string',
                 'exists:approval_statuses,status_code',
             ],
         ]);
-        $approvalAttendance->status_code = $request->status_code;
+        $approvalAttendance->status_code = $validated['status_code'];
         $approvalAttendance->save();
 
         // 承認された場合は既存の Attendance を更新
@@ -36,19 +36,21 @@ class AdminApprovalAttendanceController extends Controller
 
             if ($attendance) {
                 // 勤怠本体を更新
-                $attendance->clock_in = $approvalAttendance->clock_in;
-                $attendance->clock_out = $approvalAttendance->clock_out;
+                $attendance->start_time = $approvalAttendance->start_time;
+                $attendance->end_time = $approvalAttendance->end_time;
+                $attendance->setWorkValue();
                 $attendance->save();
 
                 // 既存の AttendanceBreak を削除して新しいものを作成する方法
                 $attendance->attendanceBreaks()->delete();
                 if (!empty($approvalAttendance->attendanceBreaks)) {
                     foreach ($approvalAttendance->attendanceBreaks as $break) {
-                        AttendanceBreak::create([
-                            'attendance_id' => $attendance->id,
-                            'start_time' => $break->start_time->format('H:i:s'),
-                            'end_time' => $break->end_time->format('H:i:s'),
-                        ]);
+                        $attendanceBreak = new AttendanceBreak();
+                        $attendanceBreak->attendance_id = $attendance->id;
+                        $attendanceBreak->start_time = $break['start_time'];
+                        $attendanceBreak->end_time = $break['end_time'];
+                        $attendanceBreak->setBreakValue();
+                        $attendanceBreak->save();
                     }
                 }
             }

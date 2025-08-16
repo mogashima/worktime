@@ -11,12 +11,12 @@
 
             <div class="form-group">
                 <label>出勤時間:</label>
-                <input v-model="form.clock_in" type="time" required />
+                <input v-model="form.start_time" type="time" required />
             </div>
 
             <div class="form-group">
                 <label>退勤時間:</label>
-                <input v-model="form.clock_out" type="time" required />
+                <input v-model="form.end_time" type="time" required />
             </div>
 
             <div class="form-group">
@@ -69,6 +69,9 @@ const emptyForm = {
     date: '',
     clock_in: '',
     clock_out: '',
+    start_time: '',
+    end_time: '',
+    work_value: 0,
     attendance_breaks: [] as AttendanceBreak[]
 }
 
@@ -76,16 +79,19 @@ const form = reactive({ ...emptyForm })
 
 watch(() => props.attendance, (newVal) => {
     if (newVal) {
-        form.id = newVal.id || 0
+        form.id = newVal.id
         form.date = newVal.date ? new Date(newVal.date).toLocaleDateString('sv-SE') : ''
-        form.clock_in = newVal.clock_in.slice(0, 5)
-        form.clock_out = newVal.clock_out ? newVal.clock_out.slice(0, 5) : ''
+        form.start_time = newVal.start_time
+        form.end_time = newVal.end_time
         form.attendance_breaks = newVal.attendance_breaks
             ? newVal.attendance_breaks.map(b => ({
-                id: b.id || 0,
-                attendance_id: newVal.id || 0,
-                start_time: b.start_time.slice(0, 5),
-                end_time: b.end_time ? b.end_time.slice(0, 5) : ''
+                id: b.id,
+                attendance_id: newVal.id,
+                start_time: b.start_time,
+                end_time: b.end_time,
+                clock_in: b.clock_in,
+                clock_out: b.clock_out,
+                break_value: b.break_value,
             }))
             : []
     } else {
@@ -137,7 +143,15 @@ const cancelEdit = () => {
 }
 
 const addBreak = (attendanceId: number) => {
-    form.attendance_breaks.push({ id: 0, attendance_id: attendanceId, start_time: '', end_time: '' })
+    form.attendance_breaks.push({
+        id: 0,
+        attendance_id: attendanceId,
+        clock_in: '',
+        clock_out: '',
+        start_time: '',
+        end_time: '',
+        break_value: 0
+    })
 }
 
 const removeBreak = (index: number) => {

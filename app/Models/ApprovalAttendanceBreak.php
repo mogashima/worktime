@@ -18,11 +18,6 @@ class ApprovalAttendanceBreak extends Model
         'end_time',
     ];
 
-    protected $casts = [
-        'start_time' => 'datetime:H:i:s',
-        'end_time' => 'datetime:H:i:s',
-    ];
-
     public function approvalAttendance()
     {
         return $this->belongsTo(ApprovalAttendance::class);
