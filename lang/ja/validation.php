@@ -166,5 +166,6 @@ return [
         'description' => '備考',
         'category_code' => 'カテゴリ',
         'user_id' => 'ユーザーID',
+        'login_id' => 'ログインID',
     ],
 ];

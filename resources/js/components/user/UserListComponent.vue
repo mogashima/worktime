@@ -10,14 +10,16 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="user in users" :key="user.id" class="user-row" @mouseover="hoverRow = user.id"
-                    @mouseleave="hoverRow = null" :class="{ 'hovered': hoverRow === user.id }">
+                <tr v-for="user in users" :key="user.id" class="user-row">
                     <td>{{ user.id }}</td>
                     <td>{{ user.login_id }}</td>
                     <td>{{ user.name }}</td>
                     <td class="text-center">
-                        <button class="btn-edit" @click="$emit('select-user', user)">
+                        <button class="btn-add mr-small" @click="clickAttendanceButton(user)">
                             勤怠情報
+                        </button>
+                        <button class="btn-edit" @click="clickEditUserButton(user)">
+                            社員編集
                         </button>
                     </td>
                 </tr>
@@ -26,21 +28,25 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import axios from '@/plugins/axios'
+import { User } from '@/types/userType'
 
-const users = ref([])
-const hoverRow = ref(null)
 
-const fetchUsers = async () => {
-    try {
-        const response = await axios.get('/api/admin/user')
-        users.value = response.data
-    } catch (error) {
-        console.error('ユーザー取得エラー', error)
-    }
+const props = defineProps<{
+    users: User[]
+}>()
+
+const emit = defineEmits(['select-attendance', 'edit-user'])
+
+const clickAttendanceButton = (user: User) => {
+    emit('select-attendance', user)
 }
 
-fetchUsers()
+const clickEditUserButton = (user: User) => {
+    emit('edit-user', user)
+}
+
+
 </script>

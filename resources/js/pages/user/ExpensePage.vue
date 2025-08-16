@@ -46,7 +46,7 @@ import { useUserStore } from '@/stores/userStore'
 import { Expense } from '@/types/expenseType'
 import type { ExpenseCategory } from '@/types/expenseCategoryType'
 import { Alert, AlertType } from '@/types/alertType'
-import NavigationComponent from '@/components/NavigationComponent.vue'
+import NavigationComponent from '@/components/common/NavigationComponent.vue'
 import ExpenseListComponent from '@/components/expense/ExpenseListComponent.vue'
 import ExpenseFormComponent from '@/components/expense/ExpenseFormComponent.vue'
 import ExpenseApprovalFromComponent from '@/components/expense/ExpenseApprovalFormComponent.vue'
@@ -68,7 +68,7 @@ const userStore = useUserStore()
 
 const fetchExpenses = async () => {
     if (!userStore.user) return
-    const res = await axios.get(`/api/expense`)
+    const res = await axios.get(`/api/user/${userStore.user.id}/expense`)
     expenses.value = res.data
     // 選択リセット
     selectedExpenses.value = []
@@ -122,13 +122,9 @@ const confirmDelete = (expense: Expense) => {
 
 // 実際の削除処理
 const deleteExpense = async () => {
-    if (!deleteTargetId.value) return
+    if (!deleteTargetId.value || !userStore.user) return
     try {
-        if (userStore.isAdmin() && userStore.user) {
-            await axios.delete(`/api/admin/user/${userStore.user.id}/expense/${deleteTargetId.value}`)
-        } else {
-            await axios.delete(`/api/expense/${deleteTargetId.value}`)
-        }
+        await axios.delete(`/api/user/${userStore.user.id}/expense/${deleteTargetId.value}`)
         alertData.value = new Alert('削除に成功しました', AlertType.Success)
         await fetchExpenses()
     } catch (error) {

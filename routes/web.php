@@ -14,7 +14,6 @@ use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\ExpenseCategoryController;
 use App\Http\Controllers\Api\AdminApprovalAttendanceController;
 use App\Http\Controllers\Api\AdminApprovalExpenseController;
-use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\AdminAttendanceController;
 
 //@TODO 勤怠編集の備考を追加
@@ -28,12 +27,34 @@ Route::prefix('api')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
 
     Route::middleware('auth:sanctum')->group(function () {
+        // ユーザー関連
+        Route::prefix('user')->group(function () {
+            Route::get('/', [UserController::class, 'index']);
+            Route::put('/{user_id}', [UserController::class, 'update']);
+            Route::delete('/{user_id}', [UserController::class, 'destroy']);
+            // 自身の情報取得
+            Route::get('/current', [UserController::class, 'currentUser']);
+        });
 
-        // 自身の情報取得
-        Route::get('user', [UserController::class, 'currentUser']);
+
+        Route::prefix('user/{user}')->group(function () {
+            // 経費関連
+            Route::prefix('expense')->group(function () {
+                Route::get('/', [ExpenseController::class, 'index']);
+                Route::post('/', [ExpenseController::class, 'store']);
+                Route::put('/{expense}', [ExpenseController::class, 'update']);
+                Route::delete('/{expense}', [ExpenseController::class, 'delete']);
+
+            });
+        });
+
+        // 経費のカテゴリ取得
+        Route::prefix('expense/category')->group(function () {
+            Route::get('/', [ExpenseCategoryController::class, 'index']);
+        });
+
 
         // 勤怠関連
-
         Route::prefix('attendance')->group(function () {
             Route::get('/', [AttendanceController::class, 'index']);
             Route::post('/', [AttendanceController::class, 'store']);
@@ -47,21 +68,7 @@ Route::prefix('api')->group(function () {
             });
         });
 
-        // 経費関連
-        Route::prefix('expense')->group(function () {
-            Route::get('/', [ExpenseController::class, 'index']);
-            Route::post('/', [ExpenseController::class, 'store']);
-            Route::put('/{expense_id}', [ExpenseController::class, 'update']);
-            Route::delete('/{expense_id}', [ExpenseController::class, 'delete']);
-            Route::prefix('category')->group(function () {
-                Route::get('/', [ExpenseCategoryController::class, 'index']);
-            });
-        });
-
-
-
-
-        // 承認
+        // 申請関連
         Route::prefix('approval')->group(function () {
             Route::prefix('attendance')->group(function () {
                 Route::post('/', [ApprovalAttendanceController::class, 'store']);
@@ -72,14 +79,10 @@ Route::prefix('api')->group(function () {
                 Route::get('/', [ApprovalExpenseController::class, 'index']);
                 Route::delete('/{approvalExpense}', [ApprovalExpenseController::class, 'destroy']);
             });
-
-
         });
 
+        // 管理者用
         Route::prefix('admin')->group(function () {
-            Route::get('user', [AdminUserController::class, 'index']);
-            Route::put('user/{user_id}', [AdminUserController::class, 'update']);
-            Route::delete('user/{user_id}', [AdminUserController::class, 'destroy']);
             Route::prefix('user/{user_id}')->group(function () {
                 Route::get('attendance', [AdminAttendanceController::class, 'index']);
                 Route::post('attendance', [AdminAttendanceController::class, 'store']);
@@ -87,6 +90,7 @@ Route::prefix('api')->group(function () {
                 Route::put('attendance/{attendance_id}', [AdminAttendanceController::class, 'update']);
             });
 
+            // 承認関連
             Route::prefix('approval')->group(function () {
                 Route::prefix('attendance')->group(function () {
                     Route::get('/', [AdminApprovalAttendanceController::class, 'index']);

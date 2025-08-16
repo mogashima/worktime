@@ -13,8 +13,8 @@ class ApprovalStatusSeeder extends Seeder
     public function run()
     {
         ApprovalStatus::insert([
-            ['status_code' => 'pending', 'name' => '承認待ち'],
-            ['status_code' => 'approved', 'name' => '承認済み'],
+            ['status_code' => 'pending', 'name' => '未処理'],
+            ['status_code' => 'approved', 'name' => '承認済'],
             ['status_code' => 'rejected', 'name' => '却下'],
         ]);
     }

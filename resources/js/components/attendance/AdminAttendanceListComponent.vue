@@ -1,6 +1,6 @@
 <template>
     <div class="admin-attendance-list">
-        <p>ユーザー名: {{ user.name }}</p>
+        <p>ユーザー名: {{ user?.name }}</p>
         <table class="page-list">
             <thead>
                 <tr>
@@ -31,35 +31,16 @@
 <script setup lang="ts">
 import type { User } from '@/types/userType'
 import type { Attendance } from '@/types/attendanceType'
-import { ref, onMounted } from 'vue'
-import axios from '@/plugins/axios'
 
 const props = defineProps<{
-    user: User
+    user: User | null
+    attendances: Attendance[]
 }>()
 
 const emit = defineEmits(['edit-attendance', 'delete-attendance'])
-
-const attendances = ref<Attendance[]>([])
 
 const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
     return date.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
 }
-
-const fetchAttendances = async () => {
-    try {
-        const res = await axios.get(`/api/admin/user/${props.user.id}/attendance`)
-        attendances.value = res.data
-    } catch (error) {
-        console.error('勤怠データ取得エラー:', error)
-    }
-}
-
-onMounted(() => {
-    fetchAttendances()
-})
-
-// 外部に fetchAttendances を公開
-defineExpose({ fetchAttendances })
 </script>

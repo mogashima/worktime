@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import NavigationComponent from '@/components/NavigationComponent.vue'
+import NavigationComponent from '@/components/common/NavigationComponent.vue'
 import ApprovalAttendanceListComponent from '@/components/approval/ApprovalAttendanceListComponent.vue'
 import ApprovalExpenseListComponent from '@/components/approval/ApprovalExpenseListComponent.vue'
 import ApprovalExpenseFormComponent from '@/components/approval/ApprovalExpenseFormComponent.vue'

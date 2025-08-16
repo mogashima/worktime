@@ -94,17 +94,9 @@ const submitForm = async () => {
 
     try {
         if (isEdit.value && props.expense) {
-            if (userStore.isAdmin()) {
-                await axios.put(`/api/admin/user/${props.userId}/expense/${props.expense.id}`, form)
-            } else {
-                await axios.put(`/api/expense/${props.expense.id}`, form)
-            }
+            await axios.put(`/api/user/${props.userId}/expense/${props.expense.id}`, form)
         } else {
-            if (userStore.isAdmin()) {
-                await axios.post(`/api/admin/user/${props.userId}/expense`, form)
-            } else {
-                await axios.post(`/api/expense`, form)
-            }
+            await axios.post(`/api/user/${props.userId}/expense`, form)
         }
         emit('expense-saved')
     } catch (error: any) {

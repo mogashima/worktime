@@ -68,7 +68,7 @@ import axios from 'axios'
 import { useUserStore } from '@/stores/userStore'
 import type { Attendance } from '@/types/attendanceType'
 import { Alert, AlertType } from '@/types/alertType'
-import NavigationComponent from '@/components/NavigationComponent.vue'
+import NavigationComponent from '@/components/common/NavigationComponent.vue'
 import AlertComponent from '@/components/common/AlertComponent.vue'
 
 const userStore = useUserStore()

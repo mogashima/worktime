@@ -7,16 +7,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Models\Expense;
+use App\Models\User;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index(User $user)
     {
-        $expenses = Expense::with('category', 'user')->orderBy('date', 'desc')->get();
+        $expenses = Expense::with('category', 'user')
+            ->whereUserId($user->id)
+            ->orderBy('date', 'desc')
+            ->get();
         return $this->responseJson($expenses);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -30,7 +34,6 @@ class ExpenseController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $user = Auth::user();
         $expense = Expense::create([
             'user_id' => $user->id,
             'title' => $validated['title'],
@@ -44,7 +47,7 @@ class ExpenseController extends Controller
         return $this->responseJson($expense);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user, Expense $expense)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -58,7 +61,6 @@ class ExpenseController extends Controller
             'description' => 'nullable|string|max:255',
         ]);
 
-        $expense = Expense::findOrFail($id);
         $expense->update($validated);
 
         return $this->responseJson($expense);
@@ -67,19 +69,9 @@ class ExpenseController extends Controller
     /**
      * 一般ユーザー向け：自分の経費削除
      */
-    public function delete(Request $request, $expense_id)
+    public function delete(Request $request, User $user, Expense $expense)
     {
-        $user = Auth::user();
-        $expense = Expense::where('id', $expense_id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        if (!$expense) {
-            return $this->responseJson(['message' => '経費が見つかりません'], 404);
-        }
-
         $expense->delete();
-
         return $this->responseJson(['message' => '削除しました']);
     }
 }

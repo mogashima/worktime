@@ -19,7 +19,7 @@ export const useUserStore = defineStore('user', {
         },
         async fetchUser() {
             try {
-                const res = await axios.get('/api/user')
+                const res = await axios.get('/api/user/current')
                 this.user = res.data
             } catch (error) {
                 this.user = null
