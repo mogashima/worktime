@@ -112,6 +112,11 @@ Route::prefix('api')->group(function () {
 // ロール関連
 Route::get('/api/role', [RoleController::class, 'index']);
 
+// ログイン画面(name指定の必要があるため定義)
+Route::get('/login', function () {
+    return view('layouts.app');
+})->name('login');
+
 // ------------------------------
 // Vue SPA用 キャッチオール
 // ------------------------------
