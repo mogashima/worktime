@@ -91,7 +91,7 @@
 .modal-content,
 .modal-large-content {
     background: white;
-    padding: 20px;
+    padding: 2em;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 
@@ -102,6 +102,11 @@
             margin: 0 2em 0 0;
             color: #d93025;
         }
+    }
+
+    h3 {
+        margin-top: 0;
+        margin-bottom: 0.5em;
     }
 }
 

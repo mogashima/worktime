@@ -24,7 +24,7 @@
                 <label>金額: <input type="number" step="0.01" v-model="form.amount" required /></label>
             </div>
             <div class="form-group">
-                <label>備考: <input type="text" v-model="form.description"></label>
+                <label>備考: <textarea v-model="form.description"></textarea></label>
             </div>
 
             <div class="form-actions">

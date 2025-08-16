@@ -3,7 +3,7 @@
     <table class="page-list">
       <thead>
         <tr>
-          <th><input type="checkbox" @change="toggleSelectAll" :checked="allSelected" /></th>
+          <th></th>
           <th>日付</th>
           <th>タイトル</th>
           <th>金額</th>
@@ -40,7 +40,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import type { Expense } from '@/types/expenseType'
 
 const props = defineProps<{
@@ -55,20 +54,4 @@ const isSelected = (expense: Expense) => {
   return props.selectedExpenses?.some(e => e.id === expense.id) ?? false
 }
 
-// 全選択・全解除
-const allSelected = computed(() => {
-  return props.expenses.length > 0 && props.selectedExpenses?.length === props.expenses.length
-})
-
-const toggleSelectAll = () => {
-  if (allSelected.value) {
-    // 全解除
-    props.expenses.forEach(exp => emit('toggle-select', exp))
-  } else {
-    // 全選択
-    props.expenses.forEach(exp => {
-      if (!isSelected(exp)) emit('toggle-select', exp)
-    })
-  }
-}
 </script>

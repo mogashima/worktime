@@ -26,6 +26,15 @@ table.page-list {
 
     td.check-box {
         text-align: center;
+
+        input[type='checkbox'] {
+            cursor: pointer;
+            transform: scale(2);
+
+            &:disabled {
+                cursor: not-allowed;
+            }
+        }
     }
 }
 
@@ -39,7 +48,8 @@ table.page-list {
     }
 
     input,
-    select {
+    select,
+    textarea {
         width: 100%;
         padding: 0.6rem 0.8rem;
         border: 1px solid #ccc;

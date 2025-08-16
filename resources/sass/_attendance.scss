@@ -1,16 +1,4 @@
 .attendance-form {
-    max-width: 500px;
-    margin: auto;
-    padding: 1.5rem;
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    h3 {
-        margin-top: 0;
-        margin-bottom: 0.5em;
-    }
-
     .break-item {
         display: flex;
         align-items: center;
@@ -28,5 +16,4 @@
         font-size: 0.9rem;
         width: 100%;
     }
-
 }
