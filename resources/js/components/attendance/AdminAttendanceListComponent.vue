@@ -12,7 +12,7 @@
             </thead>
             <tbody>
                 <tr v-for="attendance in attendances" :key="attendance.id">
-                    <td>{{ formatDate(attendance.date) }}</td>
+                    <td>{{ DateFormatter.formatDate(attendance.date) }}</td>
                     <td>{{ attendance.start_time }}</td>
                     <td>{{ attendance.end_time }}</td>
                     <td>
@@ -31,6 +31,8 @@
 <script setup lang="ts">
 import type { User } from '@/types/userType'
 import type { Attendance } from '@/types/attendanceType'
+import { TimeCalculator } from '@/utils/timeCalculator';
+import { DateFormatter } from '@/utils/dateFormatter';
 
 const props = defineProps<{
     user: User | null
@@ -39,8 +41,4 @@ const props = defineProps<{
 
 const emit = defineEmits(['edit-attendance', 'delete-attendance'])
 
-const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
-}
 </script>

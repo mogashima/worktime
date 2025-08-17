@@ -14,10 +14,8 @@
         <div v-if="modalVisible" class="modal-overlay" @click.self="closeModal">
             <div class="modal-content">
                 <AttendanceFormComponent :user-id="userStore.user ? userStore.user.id : null"
-                    :attendance="editingAttendance" 
-                    @attendance-stored="onAttendanceStored" 
-                    @attendance-updated="onAttendanceUpdated"
-                    @edit-cancel="closeModal" />
+                    :attendance="editingAttendance" @attendance-stored="onAttendanceStored"
+                    @attendance-updated="onAttendanceUpdated" @edit-cancel="closeModal" />
             </div>
         </div>
     </div>
@@ -29,12 +27,13 @@ import axios from '@/plugins/axios'
 import { useUserStore } from '@/stores/userStore'
 import { Attendance } from '@/types/attendanceType'
 import { Alert, AlertType } from '@/types/alertType'
+import { AttendanceModel } from '@/models/attendanceModel'
 import NavigationComponent from '@/components/common/NavigationComponent.vue'
 import AttendanceFormComponent from '@/components/attendance/AttendanceFormComponent.vue'
 import AttendanceListComponent from '@/components/attendance/AttendanceListComponent.vue'
 import AlertComponent from '@/components/common/AlertComponent.vue'
 
-const attendances = ref<Attendance[]>([])
+const attendances = ref<AttendanceModel[]>([])
 const editingAttendance = ref<Attendance | null>(null)
 const modalVisible = ref(false)
 const userStore = useUserStore()
@@ -45,9 +44,9 @@ const fetchAttendances = async () => {
 
     try {
         const res = await axios.get(`/api/attendance`)
-        attendances.value = res.data
+        attendances.value = res.data.map((a: any) => new AttendanceModel(a))
     } catch (error) {
-        console.error('出勤データ取得エラー:', error)
+        alertData.value = new Alert('勤怠データの取得に失敗しました', AlertType.Error)
     }
 }
 

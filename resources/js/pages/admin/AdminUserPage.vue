@@ -184,7 +184,7 @@ const fetchAttendances = async () => {
         const res = await axios.get(`/api/admin/user/${userId}/attendance`)
         attendances.value = res.data
     } catch (error) {
-        console.error('勤怠データ取得エラー:', error)
+        console.error('勤怠データの取得に失敗しました', error)
     }
 }
 </script>
